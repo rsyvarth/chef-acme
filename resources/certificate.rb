@@ -108,6 +108,9 @@ action :create do
     ruby_block "create certificate for #{new_resource.cn}" do # ~FC014
       block do
         unless (all_validations.map { |authz| authz.status == 'valid' }).all?
+          all_validations.each do |authz|
+            Chef::Log.error "Failed validation #{authz.url} #{authz.error}"
+          end
           fail "[#{new_resource.cn}] Validation failed, unable to request certificate"
         end
 
